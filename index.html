@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ملتقى شباب التميز إربد</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-
 <style>
 *{box-sizing:border-box;font-family:'Cairo',sans-serif;transition:all 0.2s}
 body{
@@ -27,7 +26,7 @@ body{
 .container{
   width:100%;
   max-width:1100px;
-  background:rgba(255,255,255,0.9);
+  background:rgba(255,255,255,0.95);
   border-radius:25px;
   padding:25px;
   box-shadow:0 20px 50px rgba(0,0,0,0.2);
@@ -83,12 +82,12 @@ th,td{padding:8px;text-align:center;white-space:nowrap;}
 th{background:#0d95e8;color:white}
 tr:hover{background:#e3f2fd;transition:0.3s}
 input[type="checkbox"]{width:18px;height:18px;accent-color:#0d95e8;cursor:pointer}
-.delete-btn{background:#0d95e8;color:white}
+.delete-btn{background:#0d95e8;color:white;border:none;padding:5px 10px;border-radius:8px;cursor:pointer}
 .delete-btn:hover{transform:scale(1.1)}
 .top-board{margin-top:25px;background:#e3f2fd;padding:15px;border-radius:15px}
 .top-board ul{list-style:none;padding:0;margin:0}
 .top-board li{padding:5px 0;border-bottom:1px solid #bbdefb}
-.change-name-btn{background:#0d95e8;color:white;cursor:pointer;}
+.change-name-btn{background:#0d95e8;color:white;cursor:pointer;border:none;padding:8px 12px;border-radius:10px;}
 .notification{
   position:absolute;
   top:15px;
@@ -143,7 +142,6 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:#0d95e8;cursor:pointe
   50%{background-position:100% 50%}
   100%{background-position:0% 50%}
 }
-
 /* Responsive */
 @media (max-width:768px){
   h1{font-size:24px;}
@@ -196,7 +194,6 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:#0d95e8;cursor:pointe
 
 <div id="notification" class="notification"></div>
 
-<!-- نافذة تغيير الاسم -->
 <div id="nameModal">
   <div id="nameModalContent">
     <h3>✏ تغيير الاسم</h3>
@@ -208,32 +205,30 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:#0d95e8;cursor:pointe
 </div>
 
 <script>
-let points = 0;
-let player = localStorage.getItem("playerName");
+let points = parseInt(localStorage.getItem("pointsData")) || 0;
+let player = localStorage.getItem("playerName") || "لاعب مجهول";
+localStorage.setItem("playerName",player);
 let bestScore = parseInt(localStorage.getItem("bestScore")) || 0;
-
-if(!player){
-  player = "لاعب مجهول";
-  localStorage.setItem("playerName",player);
-}
-document.getElementById("playerName").textContent = "👤 اللاعب: "+player;
 
 const tableBody = document.querySelector("#habitTable tbody");
 const notif = document.getElementById("notification");
 const nameModal = document.getElementById("nameModal");
 const newNameInput = document.getElementById("newNameInput");
 
+document.getElementById("playerName").textContent = "👤 اللاعب: "+player;
+
+// إشعارات
 function showNotification(msg){
   notif.textContent = msg;
   notif.classList.add("show");
   setTimeout(()=>{ notif.classList.remove("show"); },3000);
 }
 
+// تحديث النقاط والمستوى
 function updateStats(action){
-  const pointsEl=document.getElementById("points");
-  pointsEl.textContent="النقاط: "+points;
-  pointsEl.classList.add("animate");
-  setTimeout(()=>pointsEl.classList.remove("animate"),400);
+  document.getElementById("points").textContent="النقاط: "+points;
+  document.getElementById("points").classList.add("animate");
+  setTimeout(()=>document.getElementById("points").classList.remove("animate"),400);
 
   let level="مبتدئ";
   if(points>=200) level="أسطورة 👑";
@@ -251,69 +246,111 @@ function updateStats(action){
   }
 
   localStorage.setItem("pointsData",points);
+  saveHabits();
   updateTop();
 }
 
-function addHabit(){
-  const input=document.getElementById("habitInput");
-  if(input.value.trim()==="") return;
-  const row=document.createElement("tr");
-  let habitCell=document.createElement("td");
-  habitCell.textContent=input.value;
+// إنشاء صف عادات
+function createHabitRow(name, days=[]){
+  const row = document.createElement("tr");
+  const habitCell = document.createElement("td");
+  habitCell.textContent = name;
   row.appendChild(habitCell);
+
   for(let i=0;i<7;i++){
-    let cell=document.createElement("td");
-    let checkbox=document.createElement("input");
-    checkbox.type="checkbox";
-    checkbox.addEventListener("change",function(){
+    const cell = document.createElement("td");
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = days[i] || false;
+
+    checkbox.addEventListener("change", function(){
       points += this.checked?10:-10;
       if(points<0) points=0;
       updateStats(this.checked?"✔ تمت زيادة 10 نقاط":"❌ نقص 10 نقاط");
+      saveHabits();
     });
+
     cell.appendChild(checkbox);
     row.appendChild(cell);
   }
-  let deleteCell=document.createElement("td");
-  deleteCell.innerHTML="<button class='delete-btn' onclick='deleteHabit(this)'>X</button>";
+
+  const deleteCell = document.createElement("td");
+  deleteCell.innerHTML = "<button class='delete-btn'>X</button>";
+  deleteCell.querySelector(".delete-btn").addEventListener("click", ()=>{
+    row.remove();
+    saveHabits();
+    showNotification("🗑 تم حذف عادة");
+  });
   row.appendChild(deleteCell);
+
+  return row;
+}
+
+// حفظ العادات في localStorage
+function saveHabits(){
+  const rows = tableBody.querySelectorAll("tr");
+  const habitsArray = [];
+  rows.forEach(row=>{
+    const name = row.cells[0].textContent;
+    const days = [];
+    for(let i=1;i<=7;i++){
+      days.push(row.cells[i].querySelector("input").checked);
+    }
+    habitsArray.push({name, days});
+  });
+  localStorage.setItem("habits", JSON.stringify(habitsArray));
+}
+
+// تحميل العادات عند الفتح
+function loadHabits(){
+  tableBody.innerHTML="";
+  const saved = JSON.parse(localStorage.getItem("habits")) || [];
+  saved.forEach(habit=>{
+    const row = createHabitRow(habit.name, habit.days);
+    tableBody.appendChild(row);
+  });
+}
+
+// إضافة عادة جديدة
+function addHabit(){
+  const input = document.getElementById("habitInput");
+  if(input.value.trim()==="") return;
+  const row = createHabitRow(input.value);
   tableBody.appendChild(row);
   input.value="";
   showNotification("✅ عادة جديدة أضيفت");
+  saveHabits();
 }
 
-function deleteHabit(btn){
-  btn.closest("tr").remove();
-  showNotification("🗑 تم حذف عادة");
-}
-
+// تحديث التوب
 function updateTop(){
-  const list=document.getElementById("topList");
+  const list = document.getElementById("topList");
   list.innerHTML="";
-  let li=document.createElement("li");
+  const li = document.createElement("li");
   li.textContent="🥇 "+player+" - "+bestScore+" نقطة";
   list.appendChild(li);
 }
 
+// تغيير الاسم
 function openNameModal(){
   newNameInput.value = player;
   nameModal.classList.add("show");
 }
-
 function saveNewName(){
-  let newName = newNameInput.value.trim();
+  const newName = newNameInput.value.trim();
   if(newName!==""){
-    player = newName;
+    player=newName;
     localStorage.setItem("playerName",player);
-    document.getElementById("playerName").textContent = "👤 اللاعب: "+player;
+    document.getElementById("playerName").textContent="👤 اللاعب: "+player;
     showNotification("✏ تم تغيير الاسم إلى "+player);
     updateTop();
   }
   nameModal.classList.remove("show");
 }
 
+// تحميل البيانات عند الفتح
 function loadData(){
-  const savedPoints=localStorage.getItem("pointsData");
-  if(savedPoints) points=parseInt(savedPoints);
+  loadHabits();
   updateStats();
 }
 
