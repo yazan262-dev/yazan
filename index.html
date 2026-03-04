@@ -16,24 +16,44 @@ body{
   display:flex;
   justify-content:center;
   padding:15px;
-  color:#0d1b2a;
 }
 @keyframes gradientMove{
   0%{background-position:0% 50%}
   50%{background-position:100% 50%}
   100%{background-position:0% 50%}
 }
+
 .container{
   width:100%;
   max-width:1100px;
-  background:rgba(255,255,255,0.95);
+  background:white;
   border-radius:25px;
   padding:25px;
   box-shadow:0 20px 50px rgba(0,0,0,0.2);
 }
-h1{text-align:center;color:#0d95e8;margin-bottom:15px;font-size:28px;}
+
+.header{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:15px;
+  margin-bottom:15px;
+}
+.logo{
+  width:70px;
+  height:70px;
+  object-fit:contain;
+  animation:logoFloat 3s ease-in-out infinite;
+}
+@keyframes logoFloat{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-6px);}
+}
+h1{color:#0d95e8;margin:0;font-size:26px;animation:fadeIn 1.2s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-20px);}to{opacity:1;transform:translateY(0);}}
+
 .stats{text-align:center;margin-bottom:20px}
-.points{font-size:22px;font-weight:bold;display:inline-block;}
+.points{font-size:22px;font-weight:bold}
 .progress{
   height:18px;
   background:#e3f2fd;
@@ -44,58 +64,84 @@ h1{text-align:center;color:#0d95e8;margin-bottom:15px;font-size:28px;}
 .progress-bar{
   height:100%;
   width:0%;
-  background:linear-gradient(90deg,#0d95e8,#ffffff);
+  background:linear-gradient(90deg,#0d95e8,#42b1f5);
   transition:0.4s;
-  border-radius:20px;
 }
-.input-section{display:flex;gap:10px;margin-bottom:15px;flex-wrap:wrap}
-input,button{padding:10px;border-radius:12px;border:1px solid #90caf9;outline:none}
 button{
+  padding:10px 15px;
+  border-radius:12px;
+  border:none;
   cursor:pointer;
   font-weight:bold;
   background:linear-gradient(45deg,#0d95e8,#42b1f5);
   color:white;
-}
-.table-container{overflow-x:auto;}
-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:14px;min-width:700px;}
-th,td{padding:8px;text-align:center;white-space:nowrap;}
-th{background:#0d95e8;color:white}
-tr:hover{background:#e3f2fd;}
-input[type="checkbox"]{width:18px;height:18px;accent-color:#0d95e8;cursor:pointer}
-.delete-btn{background:#0d95e8;color:white;border:none;padding:5px 10px;border-radius:8px;cursor:pointer}
-.top-board{margin-top:25px;background:#e3f2fd;padding:15px;border-radius:15px}
-.top-board ul{list-style:none;padding:0;margin:0}
-.top-board li{padding:5px 0;border-bottom:1px solid #bbdefb}
-.notification{
-  position:absolute;
-  top:15px;
-  right:15px;
-  background:#0d95e8;
-  color:white;
-  padding:10px 15px;
-  border-radius:12px;
-  opacity:0;
-  pointer-events:none;
-  transform:translateY(-20px);
   transition:0.3s;
 }
+button:hover{transform:scale(1.05);}
+.reset-btn{margin-top:10px;background:linear-gradient(45deg,#e53935,#ff6b6b);}
+.reset-btn:active{transform:scale(0.9);}
+
+.input-section{display:flex;gap:10px;margin-bottom:15px;flex-wrap:wrap}
+input{padding:10px;border-radius:12px;border:1px solid #90caf9}
+
+.table-container{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;margin-top:10px;min-width:700px}
+th,td{padding:8px;text-align:center}
+th{background:#0d95e8;color:white}
+tr:hover{background:#e3f2fd}
+input[type="checkbox"]{width:18px;height:18px;accent-color:#0d95e8}
+.delete-btn{
+  background:#0d95e8;
+  color:white;
+  border:none;
+  padding:5px 10px;
+  border-radius:8px;
+  cursor:pointer;
+}
+.delete-btn:hover{background:#42b1f5;}
+
+.top-board{
+  margin-top:25px;
+  background:#e3f2fd;
+  padding:15px;
+  border-radius:15px
+}
+.top-board ul{list-style:none;padding:0;margin:0}
+
+.notification{
+  position:fixed;
+  top:20px;
+  right:20px;
+  background:#00c853;
+  color:white;
+  padding:15px 20px;
+  border-radius:12px;
+  opacity:0;
+  transform:scale(0.5);
+}
 .notification.show{
-  opacity:1;
-  transform:translateY(0);
+  animation:pop 0.6s forwards;
+}
+@keyframes pop{
+  0%{opacity:0;transform:scale(0.5)}
+  60%{opacity:1;transform:scale(1.1)}
+  100%{opacity:1;transform:scale(1)}
 }
 </style>
 </head>
-
 <body>
 <div class="container">
 
-<h1>ملتقى شباب التميز إربد</h1>
+<div class="header">
+  <img src="https://i.imgur.com/UUCXAqE.png" alt="شعار ملتقى شباب التميز" class="logo">
+  <h1>ملتقى شباب التميز إربد</h1>
+</div>
 
 <div class="stats">
-  <div id="playerName"></div>
   <div class="points" id="points">النقاط: 0</div>
   <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
   <div id="level">المستوى: مبتدئ</div>
+  <button class="reset-btn" onclick="resetPoints()">🔄 تصفير النقاط</button>
 </div>
 
 <div class="input-section">
@@ -108,13 +154,8 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:#0d95e8;cursor:pointe
 <thead>
 <tr>
 <th>العادة</th>
-<th>الأحد</th>
-<th>الإثنين</th>
-<th>الثلاثاء</th>
-<th>الأربعاء</th>
-<th>الخميس</th>
-<th>الجمعة</th>
-<th>السبت</th>
+<th>الأحد</th><th>الإثنين</th><th>الثلاثاء</th>
+<th>الأربعاء</th><th>الخميس</th><th>الجمعة</th><th>السبت</th>
 <th>حذف</th>
 </tr>
 </thead>
@@ -133,138 +174,129 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:#0d95e8;cursor:pointe
 
 <script>
 let points = 0;
-let player = localStorage.getItem("playerName") || "لاعب مجهول";
 let bestScore = parseInt(localStorage.getItem("bestScore")) || 0;
-
 const tableBody = document.querySelector("#habitTable tbody");
-const notif = document.getElementById("notification");
 
-document.getElementById("playerName").textContent = "👤 اللاعب: "+player;
-
+// إشعارات
 function showNotification(msg){
+  const notif = document.getElementById("notification");
   notif.textContent = msg;
+  notif.classList.remove("show");
+  void notif.offsetWidth;
   notif.classList.add("show");
-  setTimeout(()=>{ notif.classList.remove("show"); },3000);
+  setTimeout(()=>notif.classList.remove("show"),2000);
 }
 
-function calculatePointsFromHabits(){
-  points = 0;
-  const rows = tableBody.querySelectorAll("tr");
+// حفظ العادات
+function saveHabits(){
+  const habits=[];
+  tableBody.querySelectorAll("tr").forEach(row=>{
+    const name=row.cells[0].textContent;
+    const days=[];
+    for(let i=1;i<=7;i++){days.push(row.cells[i].querySelector("input").checked);}
+    habits.push({name,days});
+  });
+  localStorage.setItem("habits",JSON.stringify(habits));
+}
 
-  rows.forEach(row=>{
+// تحميل العادات
+function loadHabits(){
+  const habits=JSON.parse(localStorage.getItem("habits"))||[];
+  tableBody.innerHTML="";
+  habits.forEach(h=>tableBody.appendChild(createHabitRow(h.name,h.days)));
+  calculatePoints();
+}
+
+// إنشاء صف عادات
+function createHabitRow(name,days=[]){
+  const row=document.createElement("tr");
+  row.innerHTML=`<td>${name}</td>`;
+  for(let i=0;i<7;i++){
+    const td=document.createElement("td");
+    const cb=document.createElement("input");
+    cb.type="checkbox";
+    cb.checked=days[i]||false;
+    cb.addEventListener("change",()=>{
+      calculatePoints(); // عند أي تغيير تحدث النقاط وتحديث التوب
+      saveHabits();
+    });
+    td.appendChild(cb);
+    row.appendChild(td);
+  }
+  const del=document.createElement("td");
+  del.innerHTML="<button class='delete-btn'>X</button>";
+  del.addEventListener("click",()=>{
+    row.remove();
+    calculatePoints(); 
+    saveHabits();
+    showNotification("🗑 تم حذف عادة");
+  });
+  row.appendChild(del);
+  return row;
+}
+
+// إضافة عادة
+function addHabit(){
+  const input=document.getElementById("habitInput");
+  if(!input.value.trim()) return;
+  const row=createHabitRow(input.value);
+  tableBody.appendChild(row);
+  input.value="";
+  saveHabits();
+  calculatePoints();
+  showNotification("✅ عادة جديدة أضيفت");
+}
+
+// حساب النقاط وتحديث التوب
+function calculatePoints(){
+  points=0;
+  tableBody.querySelectorAll("tr").forEach(row=>{
     for(let i=1;i<=7;i++){
-      if(row.cells[i].querySelector("input").checked){
-        points += 10;
-      }
+      if(row.cells[i].querySelector("input").checked) points+=10;
     }
   });
+  updateStats();
 }
 
-function updateStats(action){
+// تحديث الإحصائيات
+function updateStats(){
   document.getElementById("points").textContent="النقاط: "+points;
-
+  document.getElementById("progressBar").style.width=(points%100)+"%";
   let level="مبتدئ";
   if(points>=200) level="أسطورة 👑";
   else if(points>=100) level="متقدم 🔥";
   document.getElementById("level").textContent="المستوى: "+level;
 
-  document.getElementById("progressBar").style.width=(points%100)+"%";
-
-  if(points > bestScore){
-    bestScore = points;
+  // تحديث الرقم القياسي
+  if(points>bestScore){
+    bestScore=points;
     localStorage.setItem("bestScore",bestScore);
     showNotification("🏆 رقم قياسي جديد!");
-  } else if(action){
-    showNotification(action);
   }
 
-  updateTop();
+  // تحديث قائمة التوب لتعرض النقاط الحالية دائمًا
+  updateTopList();
 }
 
-function createHabitRow(name, days=[]){
-  const row = document.createElement("tr");
-  const habitCell = document.createElement("td");
-  habitCell.textContent = name;
-  row.appendChild(habitCell);
-
-  for(let i=0;i<7;i++){
-    const cell = document.createElement("td");
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.checked = days[i] || false;
-
-    checkbox.addEventListener("change", function(){
-      calculatePointsFromHabits();
-      updateStats(this.checked?"✔ تمت زيادة 10 نقاط":"❌ نقص 10 نقاط");
-      saveHabits();
-    });
-
-    cell.appendChild(checkbox);
-    row.appendChild(cell);
-  }
-
-  const deleteCell = document.createElement("td");
-  deleteCell.innerHTML = "<button class='delete-btn'>X</button>";
-  deleteCell.querySelector(".delete-btn").addEventListener("click", ()=>{
-    row.remove();
-    calculatePointsFromHabits();
-    updateStats("🗑 تم حذف عادة");
-    saveHabits();
-  });
-  row.appendChild(deleteCell);
-
-  return row;
-}
-
-function saveHabits(){
-  const rows = tableBody.querySelectorAll("tr");
-  const habitsArray = [];
-  rows.forEach(row=>{
-    const name = row.cells[0].textContent;
-    const days = [];
-    for(let i=1;i<=7;i++){
-      days.push(row.cells[i].querySelector("input").checked);
-    }
-    habitsArray.push({name, days});
-  });
-  localStorage.setItem("habits", JSON.stringify(habitsArray));
-}
-
-function loadHabits(){
-  tableBody.innerHTML="";
-  const saved = JSON.parse(localStorage.getItem("habits")) || [];
-  saved.forEach(habit=>{
-    const row = createHabitRow(habit.name, habit.days);
-    tableBody.appendChild(row);
-  });
-}
-
-function addHabit(){
-  const input = document.getElementById("habitInput");
-  if(input.value.trim()==="") return;
-  const row = createHabitRow(input.value);
-  tableBody.appendChild(row);
-  input.value="";
-  saveHabits();
-  showNotification("✅ عادة جديدة أضيفت");
-}
-
-function updateTop(){
-  const list = document.getElementById("topList");
+// قائمة التوب
+function updateTopList(){
+  // الآن تعرض دائمًا النقاط الحالية من كل العادات
+  const list=document.getElementById("topList");
   list.innerHTML="";
-  const li = document.createElement("li");
-  li.textContent="🥇 "+player+" - "+bestScore+" نقطة";
-  list.appendChild(li);
+  list.innerHTML=`<li>🥇 النقاط الحالية: ${points} نقطة</li>`;
 }
 
-function loadData(){
-  loadHabits();
-  calculatePointsFromHabits();
+// تصفير النقاط
+function resetPoints(){
+  document.querySelectorAll("input[type='checkbox']").forEach(cb=>cb.checked=false);
+  points=0;
   updateStats();
+  saveHabits();
+  showNotification("🔄 تم تصفير النقاط");
 }
 
-loadData();
+// تحميل العادات عند البداية
+loadHabits();
 </script>
-
 </body>
 </html>
