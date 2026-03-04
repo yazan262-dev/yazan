@@ -10,7 +10,7 @@
 body{
   margin:0;
   min-height:100vh;
-  background:linear-gradient(-45deg,#0d95e8,#42b1f5,#e3f2fd,#ffffff);
+  background:linear-gradient(-45deg,#0d47a1,#1976d2,#42a5f5,#90caf9);
   background-size:400% 400%;
   animation:gradientMove 15s ease infinite;
   display:flex;
@@ -49,7 +49,7 @@ body{
   0%,100%{transform:translateY(0);}
   50%{transform:translateY(-6px);}
 }
-h1{color:#0d95e8;margin:0;font-size:26px;animation:fadeIn 1.2s ease;}
+h1{color:#0d47a1;margin:0;font-size:26px;animation:fadeIn 1.2s ease;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(-20px);}to{opacity:1;transform:translateY(0);}}
 
 .stats{text-align:center;margin-bottom:20px}
@@ -64,7 +64,7 @@ h1{color:#0d95e8;margin:0;font-size:26px;animation:fadeIn 1.2s ease;}
 .progress-bar{
   height:100%;
   width:0%;
-  background:linear-gradient(90deg,#0d95e8,#42b1f5);
+  background:linear-gradient(90deg,#0d47a1,#1976d2,#42a5f5);
   transition:0.4s;
 }
 button{
@@ -73,32 +73,32 @@ button{
   border:none;
   cursor:pointer;
   font-weight:bold;
-  background:linear-gradient(45deg,#0d95e8,#42b1f5);
+  background:linear-gradient(45deg,#0d47a1,#1976d2);
   color:white;
   transition:0.3s;
 }
 button:hover{transform:scale(1.05);}
-.reset-btn{margin-top:10px;background:linear-gradient(45deg,#e53935,#ff6b6b);}
+.reset-btn{margin-top:10px;background:linear-gradient(45deg,#1565c0,#42a5f5);}
 .reset-btn:active{transform:scale(0.9);}
 
 .input-section{display:flex;gap:10px;margin-bottom:15px;flex-wrap:wrap}
-input{padding:10px;border-radius:12px;border:1px solid #90caf9}
+input{padding:10px;border-radius:12px;border:1px solid #1976d2;background:#e1f5fe;color:#0d47a1}
 
 .table-container{overflow-x:auto;}
 table{width:100%;border-collapse:collapse;margin-top:10px;min-width:700px}
 th,td{padding:8px;text-align:center}
-th{background:#0d95e8;color:white}
+th{background:#0d47a1;color:white}
 tr:hover{background:#e3f2fd}
-input[type="checkbox"]{width:18px;height:18px;accent-color:#0d95e8}
+input[type="checkbox"]{width:18px;height:18px;accent-color:#0d47a1}
 .delete-btn{
-  background:#0d95e8;
+  background:#1976d2;
   color:white;
   border:none;
   padding:5px 10px;
   border-radius:8px;
   cursor:pointer;
 }
-.delete-btn:hover{background:#42b1f5;}
+.delete-btn:hover{background:#42a5f5;}
 
 .top-board{
   margin-top:25px;
@@ -112,7 +112,7 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:#0d95e8}
   position:fixed;
   top:20px;
   right:20px;
-  background:#00c853;
+  background:#0d47a1;
   color:white;
   padding:15px 20px;
   border-radius:12px;
@@ -177,7 +177,6 @@ let points = 0;
 let bestScore = parseInt(localStorage.getItem("bestScore")) || 0;
 const tableBody = document.querySelector("#habitTable tbody");
 
-// إشعارات
 function showNotification(msg){
   const notif = document.getElementById("notification");
   notif.textContent = msg;
@@ -187,7 +186,6 @@ function showNotification(msg){
   setTimeout(()=>notif.classList.remove("show"),2000);
 }
 
-// حفظ العادات
 function saveHabits(){
   const habits=[];
   tableBody.querySelectorAll("tr").forEach(row=>{
@@ -199,7 +197,6 @@ function saveHabits(){
   localStorage.setItem("habits",JSON.stringify(habits));
 }
 
-// تحميل العادات
 function loadHabits(){
   const habits=JSON.parse(localStorage.getItem("habits"))||[];
   tableBody.innerHTML="";
@@ -207,7 +204,6 @@ function loadHabits(){
   calculatePoints();
 }
 
-// إنشاء صف عادات
 function createHabitRow(name,days=[]){
   const row=document.createElement("tr");
   row.innerHTML=`<td>${name}</td>`;
@@ -217,7 +213,7 @@ function createHabitRow(name,days=[]){
     cb.type="checkbox";
     cb.checked=days[i]||false;
     cb.addEventListener("change",()=>{
-      calculatePoints(); // عند أي تغيير تحدث النقاط وتحديث التوب
+      calculatePoints();
       saveHabits();
     });
     td.appendChild(cb);
@@ -235,7 +231,6 @@ function createHabitRow(name,days=[]){
   return row;
 }
 
-// إضافة عادة
 function addHabit(){
   const input=document.getElementById("habitInput");
   if(!input.value.trim()) return;
@@ -247,7 +242,6 @@ function addHabit(){
   showNotification("✅ عادة جديدة أضيفت");
 }
 
-// حساب النقاط وتحديث التوب
 function calculatePoints(){
   points=0;
   tableBody.querySelectorAll("tr").forEach(row=>{
@@ -258,7 +252,6 @@ function calculatePoints(){
   updateStats();
 }
 
-// تحديث الإحصائيات
 function updateStats(){
   document.getElementById("points").textContent="النقاط: "+points;
   document.getElementById("progressBar").style.width=(points%100)+"%";
@@ -267,26 +260,21 @@ function updateStats(){
   else if(points>=100) level="متقدم 🔥";
   document.getElementById("level").textContent="المستوى: "+level;
 
-  // تحديث الرقم القياسي
   if(points>bestScore){
     bestScore=points;
     localStorage.setItem("bestScore",bestScore);
     showNotification("🏆 رقم قياسي جديد!");
   }
 
-  // تحديث قائمة التوب لتعرض النقاط الحالية دائمًا
   updateTopList();
 }
 
-// قائمة التوب
 function updateTopList(){
-  // الآن تعرض دائمًا النقاط الحالية من كل العادات
   const list=document.getElementById("topList");
   list.innerHTML="";
   list.innerHTML=`<li>🥇 النقاط الحالية: ${points} نقطة</li>`;
 }
 
-// تصفير النقاط
 function resetPoints(){
   document.querySelectorAll("input[type='checkbox']").forEach(cb=>cb.checked=false);
   points=0;
@@ -295,7 +283,6 @@ function resetPoints(){
   showNotification("🔄 تم تصفير النقاط");
 }
 
-// تحميل العادات عند البداية
 loadHabits();
 </script>
 </body>
