@@ -118,6 +118,7 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:#0d47a1}
   border-radius:12px;
   opacity:0;
   transform:scale(0.5);
+  z-index:1000;
 }
 .notification.show{
   animation:pop 0.6s forwards;
@@ -135,6 +136,15 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:#0d47a1}
 <div class="header">
   <img src="https://i.imgur.com/UUCXAqE.png" alt="شعار ملتقى شباب التميز" class="logo">
   <h1>ملتقى شباب التميز إربد</h1>
+</div>
+
+<!-- قسم الاسم -->
+<div class="input-section">
+  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;width:100%;">
+    <span id="displayName" style="font-weight:bold;font-size:18px;animation:fadeIn 1s;">اسمك: <span id="currentName">ضيف هنا</span></span>
+    <input type="text" id="nameInput" placeholder="غيّر اسمك...">
+    <button onclick="changeName()">تغيير الاسم</button>
+  </div>
 </div>
 
 <div class="stats">
@@ -186,6 +196,7 @@ function showNotification(msg){
   setTimeout(()=>notif.classList.remove("show"),2000);
 }
 
+// حفظ العادات في التخزين
 function saveHabits(){
   const habits=[];
   tableBody.querySelectorAll("tr").forEach(row=>{
@@ -197,6 +208,7 @@ function saveHabits(){
   localStorage.setItem("habits",JSON.stringify(habits));
 }
 
+// تحميل العادات
 function loadHabits(){
   const habits=JSON.parse(localStorage.getItem("habits"))||[];
   tableBody.innerHTML="";
@@ -204,6 +216,7 @@ function loadHabits(){
   calculatePoints();
 }
 
+// إنشاء صف عادة جديدة
 function createHabitRow(name,days=[]){
   const row=document.createElement("tr");
   row.innerHTML=`<td>${name}</td>`;
@@ -231,6 +244,7 @@ function createHabitRow(name,days=[]){
   return row;
 }
 
+// إضافة عادة جديدة
 function addHabit(){
   const input=document.getElementById("habitInput");
   if(!input.value.trim()) return;
@@ -242,6 +256,7 @@ function addHabit(){
   showNotification("✅ عادة جديدة أضيفت");
 }
 
+// حساب النقاط
 function calculatePoints(){
   points=0;
   tableBody.querySelectorAll("tr").forEach(row=>{
@@ -252,6 +267,7 @@ function calculatePoints(){
   updateStats();
 }
 
+// تحديث الإحصائيات
 function updateStats(){
   document.getElementById("points").textContent="النقاط: "+points;
   document.getElementById("progressBar").style.width=(points%100)+"%";
@@ -269,12 +285,14 @@ function updateStats(){
   updateTopList();
 }
 
+// تحديث قائمة أعلى النقاط
 function updateTopList(){
   const list=document.getElementById("topList");
   list.innerHTML="";
   list.innerHTML=`<li>🥇 النقاط الحالية: ${points} نقطة</li>`;
 }
 
+// تصفير النقاط
 function resetPoints(){
   document.querySelectorAll("input[type='checkbox']").forEach(cb=>cb.checked=false);
   points=0;
@@ -283,6 +301,28 @@ function resetPoints(){
   showNotification("🔄 تم تصفير النقاط");
 }
 
+// تغيير الاسم مع أنيميشن وإشعار
+function changeName(){
+  const input=document.getElementById("nameInput");
+  const newName=input.value.trim();
+  if(!newName) return;
+  
+  const nameDisplay=document.getElementById("currentName");
+  nameDisplay.style.transition="all 0.5s";
+  nameDisplay.style.transform="scale(1.3)";
+  nameDisplay.style.color="#ff5722";
+  
+  setTimeout(()=>{
+    nameDisplay.textContent=newName;
+    nameDisplay.style.transform="scale(1)";
+    nameDisplay.style.color="#0d47a1";
+  },300);
+  
+  input.value="";
+  showNotification("✨ تم تغيير الاسم بنجاح!");
+}
+
+// تحميل العادات عند البداية
 loadHabits();
 </script>
 </body>
