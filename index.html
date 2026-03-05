@@ -52,6 +52,7 @@ body{
 h1{color:#0d47a1;margin:0;font-size:26px;animation:fadeIn 1.2s ease;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(-20px);}to{opacity:1;transform:translateY(0);}}
 
+/* إحصائيات ونقاط */
 .stats{text-align:center;margin-bottom:20px}
 .points{font-size:22px;font-weight:bold}
 .progress{
@@ -68,7 +69,7 @@ h1{color:#0d47a1;margin:0;font-size:26px;animation:fadeIn 1.2s ease;}
   transition:0.4s;
 }
 button{
-  padding:10px 15px;
+  padding:8px 12px;
   border-radius:12px;
   border:none;
   cursor:pointer;
@@ -76,17 +77,31 @@ button{
   background:linear-gradient(45deg,#0d47a1,#1976d2);
   color:white;
   transition:0.3s;
+  font-size:14px;
 }
 button:hover{transform:scale(1.05);}
 .reset-btn{margin-top:10px;background:linear-gradient(45deg,#1565c0,#42a5f5);}
 .reset-btn:active{transform:scale(0.9);}
 
-.input-section{display:flex;gap:10px;margin-bottom:15px;flex-wrap:wrap}
-input{padding:10px;border-radius:12px;border:1px solid #1976d2;background:#e1f5fe;color:#0d47a1}
+/* قسم إدخال العادات وتغيير الاسم */
+.input-section{display:flex;gap:8px;margin-bottom:15px;flex-wrap:wrap;align-items:center;}
+.input-section input{
+  padding:8px;
+  border-radius:12px;
+  border:1px solid #1976d2;
+  background:#e1f5fe;
+  color:#0d47a1;
+  flex:1 1 auto;
+  min-width:100px;
+  max-width:250px; /* قصير */
+  font-size:14px;
+}
+.input-section button{flex:0 0 auto; font-size:14px;}
 
+/* جدول العادات */
 .table-container{overflow-x:auto;}
 table{width:100%;border-collapse:collapse;margin-top:10px;min-width:700px}
-th,td{padding:8px;text-align:center}
+th,td{padding:6px;text-align:center;font-size:14px;}
 th{background:#0d47a1;color:white}
 tr:hover{background:#e3f2fd}
 input[type="checkbox"]{width:18px;height:18px;accent-color:#0d47a1}
@@ -94,27 +109,30 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:#0d47a1}
   background:#1976d2;
   color:white;
   border:none;
-  padding:5px 10px;
+  padding:4px 8px;
   border-radius:8px;
   cursor:pointer;
+  font-size:12px;
 }
 .delete-btn:hover{background:#42a5f5;}
 
+/* أعلى نتيجة */
 .top-board{
   margin-top:25px;
   background:#e3f2fd;
-  padding:15px;
-  border-radius:15px
+  padding:10px 15px;
+  border-radius:15px;
 }
-.top-board ul{list-style:none;padding:0;margin:0}
+.top-board ul{list-style:none;padding:0;margin:0;font-size:14px;}
 
+/* إشعارات */
 .notification{
   position:fixed;
   top:20px;
   right:20px;
   background:#0d47a1;
   color:white;
-  padding:15px 20px;
+  padding:12px 16px;
   border-radius:12px;
   opacity:0;
   transform:scale(0.5);
@@ -128,6 +146,18 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:#0d47a1}
   60%{opacity:1;transform:scale(1.1)}
   100%{opacity:1;transform:scale(1)}
 }
+
+/* Responsive */
+@media(max-width:768px){
+  .header h1{font-size:22px;}
+  .logo{width:60px;height:60px;}
+  .input-section input{max-width:180px;}
+}
+@media(max-width:480px){
+  .header h1{font-size:20px;}
+  .logo{width:50px;height:50px;}
+  .input-section input{max-width:140px;}
+}
 </style>
 </head>
 <body>
@@ -140,13 +170,14 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:#0d47a1}
 
 <!-- قسم الاسم -->
 <div class="input-section">
-  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;width:100%;">
-    <span id="displayName" style="font-weight:bold;font-size:18px;animation:fadeIn 1s;">اسمك: <span id="currentName">ضيف هنا</span></span>
-    <input type="text" id="nameInput" placeholder="غيّر اسمك...">
-    <button onclick="changeName()">تغيير الاسم</button>
-  </div>
+  <span id="displayName" style="font-weight:bold;font-size:16px;animation:fadeIn 1s;">
+    اسمك: <span id="currentName">ضيف هنا</span>
+  </span>
+  <input type="text" id="nameInput" placeholder="غيّر اسمك...">
+  <button onclick="changeName()">تغيير الاسم</button>
 </div>
 
+<!-- الإحصائيات -->
 <div class="stats">
   <div class="points" id="points">النقاط: 0</div>
   <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
@@ -154,6 +185,7 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:#0d47a1}
   <button class="reset-btn" onclick="resetPoints()">🔄 تصفير النقاط</button>
 </div>
 
+<!-- إضافة العادات -->
 <div class="input-section">
   <input type="text" id="habitInput" placeholder="أضف عادة جديدة...">
   <button onclick="addHabit()">إضافة</button>
@@ -187,6 +219,7 @@ let points = 0;
 let bestScore = parseInt(localStorage.getItem("bestScore")) || 0;
 const tableBody = document.querySelector("#habitTable tbody");
 
+// إشعارات
 function showNotification(msg){
   const notif = document.getElementById("notification");
   notif.textContent = msg;
@@ -196,7 +229,7 @@ function showNotification(msg){
   setTimeout(()=>notif.classList.remove("show"),2000);
 }
 
-// حفظ العادات في التخزين
+// حفظ العادات
 function saveHabits(){
   const habits=[];
   tableBody.querySelectorAll("tr").forEach(row=>{
@@ -285,10 +318,9 @@ function updateStats(){
   updateTopList();
 }
 
-// تحديث قائمة أعلى النقاط
+// تحديث أعلى النقاط
 function updateTopList(){
   const list=document.getElementById("topList");
-  list.innerHTML="";
   list.innerHTML=`<li>🥇 النقاط الحالية: ${points} نقطة</li>`;
 }
 
@@ -301,29 +333,36 @@ function resetPoints(){
   showNotification("🔄 تم تصفير النقاط");
 }
 
-// تغيير الاسم مع أنيميشن وإشعار
+// تغيير الاسم وحفظه
 function changeName(){
   const input=document.getElementById("nameInput");
   const newName=input.value.trim();
   if(!newName) return;
-  
+
   const nameDisplay=document.getElementById("currentName");
   nameDisplay.style.transition="all 0.5s";
   nameDisplay.style.transform="scale(1.3)";
   nameDisplay.style.color="#ff5722";
-  
+
   setTimeout(()=>{
     nameDisplay.textContent=newName;
     nameDisplay.style.transform="scale(1)";
     nameDisplay.style.color="#0d47a1";
   },300);
-  
+
+  localStorage.setItem("userName", newName);
   input.value="";
   showNotification("✨ تم تغيير الاسم بنجاح!");
 }
 
-// تحميل العادات عند البداية
-loadHabits();
+// استرجاع الاسم عند تحميل الصفحة
+window.addEventListener("DOMContentLoaded",()=>{
+  const savedName = localStorage.getItem("userName");
+  if(savedName){
+    document.getElementById("currentName").textContent = savedName;
+  }
+  loadHabits();
+});
 </script>
 </body>
 </html>
