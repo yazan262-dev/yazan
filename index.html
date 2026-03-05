@@ -22,7 +22,6 @@ body{
   50%{background-position:100% 50%}
   100%{background-position:0% 50%}
 }
-
 .container{
   width:100%;
   max-width:1100px;
@@ -31,7 +30,6 @@ body{
   padding:25px;
   box-shadow:0 20px 50px rgba(0,0,0,0.2);
 }
-
 .header{
   display:flex;
   align-items:center;
@@ -69,7 +67,7 @@ h1{color:#0d47a1;margin:0;font-size:26px;animation:fadeIn 1.2s ease;}
   transition:0.4s;
 }
 button{
-  padding:8px 12px;
+  padding:5px 8px;
   border-radius:12px;
   border:none;
   cursor:pointer;
@@ -77,63 +75,70 @@ button{
   background:linear-gradient(45deg,#0d47a1,#1976d2);
   color:white;
   transition:0.3s;
-  font-size:14px;
+  font-size:12px;
 }
 button:hover{transform:scale(1.05);}
 .reset-btn{margin-top:10px;background:linear-gradient(45deg,#1565c0,#42a5f5);}
 .reset-btn:active{transform:scale(0.9);}
 
-/* قسم إدخال العادات وتغيير الاسم */
-.input-section{display:flex;gap:8px;margin-bottom:15px;flex-wrap:wrap;align-items:center;}
+.input-section{display:flex;gap:5px;margin-bottom:15px;flex-wrap:wrap;align-items:center;}
 .input-section input{
-  padding:8px;
+  padding:5px;
   border-radius:12px;
   border:1px solid #1976d2;
   background:#e1f5fe;
   color:#0d47a1;
   flex:1 1 auto;
-  min-width:100px;
-  max-width:250px; /* قصير */
-  font-size:14px;
+  min-width:70px;
+  max-width:180px;
+  font-size:12px;
 }
-.input-section button{flex:0 0 auto; font-size:14px;}
+.input-section button{flex:0 0 auto; font-size:12px;}
 
-/* جدول العادات */
-.table-container{overflow-x:auto;}
-table{width:100%;border-collapse:collapse;margin-top:10px;min-width:700px}
-th,td{padding:6px;text-align:center;font-size:14px;}
+.table-container{
+  overflow-x:auto;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:10px;
+  min-width:480px; /* أصغر عرض ممكن يظهر كل أيام الأسبوع */
+}
+th,td{
+  padding:2px;
+  text-align:center;
+  font-size:10px;
+}
 th{background:#0d47a1;color:white}
 tr:hover{background:#e3f2fd}
-input[type="checkbox"]{width:18px;height:18px;accent-color:#0d47a1}
+input[type="checkbox"]{width:14px;height:14px;accent-color:#0d47a1}
 .delete-btn{
   background:#1976d2;
   color:white;
   border:none;
-  padding:4px 8px;
-  border-radius:8px;
+  padding:2px 4px;
+  border-radius:6px;
   cursor:pointer;
-  font-size:12px;
+  font-size:9px;
 }
 .delete-btn:hover{background:#42a5f5;}
 
-/* أعلى نتيجة */
 .top-board{
-  margin-top:25px;
+  margin-top:15px;
   background:#e3f2fd;
-  padding:10px 15px;
-  border-radius:15px;
+  padding:6px 10px;
+  border-radius:10px;
 }
-.top-board ul{list-style:none;padding:0;margin:0;font-size:14px;}
+.top-board ul{list-style:none;padding:0;margin:0;font-size:12px;}
 
-/* إشعارات */
 .notification{
   position:fixed;
-  top:20px;
-  right:20px;
+  top:15px;
+  right:15px;
   background:#0d47a1;
   color:white;
-  padding:12px 16px;
-  border-radius:12px;
+  padding:8px 12px;
+  border-radius:10px;
   opacity:0;
   transform:scale(0.5);
   z-index:1000;
@@ -149,14 +154,20 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:#0d47a1}
 
 /* Responsive */
 @media(max-width:768px){
-  .header h1{font-size:22px;}
-  .logo{width:60px;height:60px;}
-  .input-section input{max-width:180px;}
-}
-@media(max-width:480px){
   .header h1{font-size:20px;}
   .logo{width:50px;height:50px;}
   .input-section input{max-width:140px;}
+  table, th, td{font-size:9px; padding:1px;}
+  .delete-btn{padding:1px 3px; font-size:8px;}
+}
+
+@media(max-width:480px){
+  .header h1{font-size:18px;}
+  .logo{width:40px;height:40px;}
+  .input-section input{max-width:100px;}
+  table, th, td{font-size:8px; padding:1px;}
+  .delete-btn{padding:1px 2px; font-size:7px;}
+  table{min-width:420px;} /* أصغر جدول ممكن يظهر كل أيام الأسبوع على الجوال */
 }
 </style>
 </head>
@@ -168,16 +179,14 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:#0d47a1}
   <h1>ملتقى شباب التميز إربد</h1>
 </div>
 
-<!-- قسم الاسم -->
 <div class="input-section">
-  <span id="displayName" style="font-weight:bold;font-size:16px;animation:fadeIn 1s;">
+  <span id="displayName" style="font-weight:bold;font-size:14px;animation:fadeIn 1s;">
     اسمك: <span id="currentName">ضيف هنا</span>
   </span>
   <input type="text" id="nameInput" placeholder="غيّر اسمك...">
   <button onclick="changeName()">تغيير الاسم</button>
 </div>
 
-<!-- الإحصائيات -->
 <div class="stats">
   <div class="points" id="points">النقاط: 0</div>
   <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
@@ -185,7 +194,6 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:#0d47a1}
   <button class="reset-btn" onclick="resetPoints()">🔄 تصفير النقاط</button>
 </div>
 
-<!-- إضافة العادات -->
 <div class="input-section">
   <input type="text" id="habitInput" placeholder="أضف عادة جديدة...">
   <button onclick="addHabit()">إضافة</button>
@@ -211,7 +219,6 @@ input[type="checkbox"]{width:18px;height:18px;accent-color:#0d47a1}
 </div>
 
 <div id="notification" class="notification"></div>
-
 </div>
 
 <script>
@@ -219,7 +226,6 @@ let points = 0;
 let bestScore = parseInt(localStorage.getItem("bestScore")) || 0;
 const tableBody = document.querySelector("#habitTable tbody");
 
-// إشعارات
 function showNotification(msg){
   const notif = document.getElementById("notification");
   notif.textContent = msg;
@@ -229,7 +235,6 @@ function showNotification(msg){
   setTimeout(()=>notif.classList.remove("show"),2000);
 }
 
-// حفظ العادات
 function saveHabits(){
   const habits=[];
   tableBody.querySelectorAll("tr").forEach(row=>{
@@ -241,7 +246,6 @@ function saveHabits(){
   localStorage.setItem("habits",JSON.stringify(habits));
 }
 
-// تحميل العادات
 function loadHabits(){
   const habits=JSON.parse(localStorage.getItem("habits"))||[];
   tableBody.innerHTML="";
@@ -249,7 +253,6 @@ function loadHabits(){
   calculatePoints();
 }
 
-// إنشاء صف عادة جديدة
 function createHabitRow(name,days=[]){
   const row=document.createElement("tr");
   row.innerHTML=`<td>${name}</td>`;
@@ -277,7 +280,6 @@ function createHabitRow(name,days=[]){
   return row;
 }
 
-// إضافة عادة جديدة
 function addHabit(){
   const input=document.getElementById("habitInput");
   if(!input.value.trim()) return;
@@ -289,7 +291,6 @@ function addHabit(){
   showNotification("✅ عادة جديدة أضيفت");
 }
 
-// حساب النقاط
 function calculatePoints(){
   points=0;
   tableBody.querySelectorAll("tr").forEach(row=>{
@@ -300,7 +301,6 @@ function calculatePoints(){
   updateStats();
 }
 
-// تحديث الإحصائيات
 function updateStats(){
   document.getElementById("points").textContent="النقاط: "+points;
   document.getElementById("progressBar").style.width=(points%100)+"%";
@@ -308,23 +308,19 @@ function updateStats(){
   if(points>=200) level="أسطورة 👑";
   else if(points>=100) level="متقدم 🔥";
   document.getElementById("level").textContent="المستوى: "+level;
-
   if(points>bestScore){
     bestScore=points;
     localStorage.setItem("bestScore",bestScore);
     showNotification("🏆 رقم قياسي جديد!");
   }
-
   updateTopList();
 }
 
-// تحديث أعلى النقاط
 function updateTopList(){
   const list=document.getElementById("topList");
   list.innerHTML=`<li>🥇 النقاط الحالية: ${points} نقطة</li>`;
 }
 
-// تصفير النقاط
 function resetPoints(){
   document.querySelectorAll("input[type='checkbox']").forEach(cb=>cb.checked=false);
   points=0;
@@ -333,29 +329,24 @@ function resetPoints(){
   showNotification("🔄 تم تصفير النقاط");
 }
 
-// تغيير الاسم وحفظه
 function changeName(){
   const input=document.getElementById("nameInput");
   const newName=input.value.trim();
   if(!newName) return;
-
   const nameDisplay=document.getElementById("currentName");
   nameDisplay.style.transition="all 0.5s";
   nameDisplay.style.transform="scale(1.3)";
   nameDisplay.style.color="#ff5722";
-
   setTimeout(()=>{
     nameDisplay.textContent=newName;
     nameDisplay.style.transform="scale(1)";
     nameDisplay.style.color="#0d47a1";
   },300);
-
   localStorage.setItem("userName", newName);
   input.value="";
   showNotification("✨ تم تغيير الاسم بنجاح!");
 }
 
-// استرجاع الاسم عند تحميل الصفحة
 window.addEventListener("DOMContentLoaded",()=>{
   const savedName = localStorage.getItem("userName");
   if(savedName){
