@@ -47,10 +47,7 @@ body{
   0%,100%{transform:translateY(0);}
   50%{transform:translateY(-6px);}
 }
-h1{color:#0d47a1;margin:0;font-size:26px;animation:fadeIn 1.2s ease;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(-20px);}to{opacity:1;transform:translateY(0);}}
-
-/* إحصائيات ونقاط */
+h1{color:#0d47a1;margin:0;font-size:26px;}
 .stats{text-align:center;margin-bottom:20px}
 .points{font-size:22px;font-weight:bold}
 .progress{
@@ -64,7 +61,6 @@ h1{color:#0d47a1;margin:0;font-size:26px;animation:fadeIn 1.2s ease;}
   height:100%;
   width:0%;
   background:linear-gradient(90deg,#0d47a1,#1976d2,#42a5f5);
-  transition:0.4s;
 }
 button{
   padding:6px 10px;
@@ -80,8 +76,6 @@ button{
 button:hover{transform:scale(1.05);}
 .reset-btn{margin-top:10px;background:linear-gradient(45deg,#1565c0,#42a5f5);}
 .reset-btn:active{transform:scale(0.9);}
-
-/* قسم إدخال العادات وتغيير الاسم */
 .input-section{display:flex;gap:6px;margin-bottom:15px;flex-wrap:wrap;align-items:center;}
 .input-section input{
   padding:6px;
@@ -94,17 +88,12 @@ button:hover{transform:scale(1.05);}
   max-width:200px;
   font-size:13px;
 }
-.input-section button{flex:0 0 auto; font-size:13px;}
-
-/* جدول العادات */
-.table-container{
-  overflow-x:auto;
-}
+.table-container{overflow-x:auto;}
 table{
   width:100%;
   border-collapse:collapse;
   margin-top:10px;
-  min-width:440px; /* مناسب للشاشات الصغيرة */
+  min-width:440px;
 }
 th,td{
   padding:3px;
@@ -124,8 +113,6 @@ input[type="checkbox"]{width:16px;height:16px;accent-color:#0d47a1}
   font-size:10px;
 }
 .delete-btn:hover{background:#42a5f5;}
-
-/* أعلى نتيجة */
 .top-board{
   margin-top:15px;
   background:#e3f2fd;
@@ -133,13 +120,11 @@ input[type="checkbox"]{width:16px;height:16px;accent-color:#0d47a1}
   border-radius:12px;
 }
 .top-board ul{list-style:none;padding:0;margin:0;font-size:13px;}
-
-/* إشعارات */
 .notification{
   position:fixed;
   top:15px;
   right:15px;
-  background:#0d47a1;
+  background:#ff3d00;
   color:white;
   padding:10px 14px;
   border-radius:10px;
@@ -152,11 +137,9 @@ input[type="checkbox"]{width:16px;height:16px;accent-color:#0d47a1}
 }
 @keyframes pop{
   0%{opacity:0;transform:scale(0.5)}
-  60%{opacity:1;transform:scale(1.1)}
+  60%{opacity:1;transform:scale(1.2)}
   100%{opacity:1;transform:scale(1)}
 }
-
-/* Responsive */
 @media(max-width:768px){
   .header h1{font-size:22px;}
   .logo{width:50px;height:50px;}
@@ -164,15 +147,21 @@ input[type="checkbox"]{width:16px;height:16px;accent-color:#0d47a1}
   table, th, td{font-size:10px; padding:2px;}
   .delete-btn{padding:2px 4px; font-size:9px;}
 }
-
 @media(max-width:480px){
   .header h1{font-size:20px;}
   .logo{width:45px;height:45px;}
   .input-section input{max-width:120px;}
   table, th, td{font-size:11px; padding:2px;}
   .delete-btn{padding:2px 4px; font-size:10px;}
-  table{min-width:460px;} /* أكبر شوي من قبل للراحة */
+  table{min-width:460px;}
 }
+/* لعبة الحية */
+.game-section{margin-top:40px;text-align:center;}
+.game-box{position:relative;display:flex;justify-content:center;}
+canvas{background:#0d47a1;border-radius:15px;box-shadow:0 10px 25px rgba(0,0,0,0.3);max-width:100%;}
+.score{position:absolute;top:10px;left:10px;background:rgba(0,0,0,0.6);color:white;padding:5px 12px;border-radius:10px;font-weight:bold;}
+.controls{margin-top:15px;display:grid;grid-template-columns:60px 60px 60px;justify-content:center;gap:8px;}
+.controls button{font-size:22px;padding:10px;}
 </style>
 </head>
 <body>
@@ -184,7 +173,7 @@ input[type="checkbox"]{width:16px;height:16px;accent-color:#0d47a1}
 </div>
 
 <div class="input-section">
-  <span id="displayName" style="font-weight:bold;font-size:14px;animation:fadeIn 1s;">
+  <span id="displayName" style="font-weight:bold;font-size:14px;">
     اسمك: <span id="currentName">ضيف هنا</span>
   </span>
   <input type="text" id="nameInput" placeholder="غيّر اسمك...">
@@ -223,22 +212,43 @@ input[type="checkbox"]{width:16px;height:16px;accent-color:#0d47a1}
 </div>
 
 <div id="notification" class="notification"></div>
+
+<!-- لعبة الحية -->
+<div class="game-section">
+<h2>🐍 لعبة الحية</h2>
+<div class="game-box">
+<div class="score">Score: <span id="score">0</span></div>
+<canvas id="game" width="320" height="320"></canvas>
+</div>
+<div>
+<button onclick="startGame()">▶️ بدء اللعبة</button>
+<button onclick="pauseGame()">⏸ إيقاف مؤقت</button>
+</div>
+<div class="controls">
+<div></div>
+<button onclick="changeDirection('up')">⬆️</button>
+<div></div>
+<button onclick="changeDirection('left')">⬅️</button>
+<button onclick="changeDirection('down')">⬇️</button>
+<button onclick="changeDirection('right')">➡️</button>
+</div>
+</div>
+
 </div>
 
 <script>
-let points = 0;
-let bestScore = parseInt(localStorage.getItem("bestScore")) || 0;
-const tableBody = document.querySelector("#habitTable tbody");
-
+/* ---- نظام العادات والاسم والنقاط ---- */
+let points=0;
+let bestScore=parseInt(localStorage.getItem("bestScore"))||0;
+const tableBody=document.querySelector("#habitTable tbody");
 function showNotification(msg){
-  const notif = document.getElementById("notification");
-  notif.textContent = msg;
+  const notif=document.getElementById("notification");
+  notif.textContent=msg;
   notif.classList.remove("show");
   void notif.offsetWidth;
   notif.classList.add("show");
   setTimeout(()=>notif.classList.remove("show"),2000);
 }
-
 function saveHabits(){
   const habits=[];
   tableBody.querySelectorAll("tr").forEach(row=>{
@@ -249,14 +259,12 @@ function saveHabits(){
   });
   localStorage.setItem("habits",JSON.stringify(habits));
 }
-
 function loadHabits(){
   const habits=JSON.parse(localStorage.getItem("habits"))||[];
   tableBody.innerHTML="";
   habits.forEach(h=>tableBody.appendChild(createHabitRow(h.name,h.days)));
   calculatePoints();
 }
-
 function createHabitRow(name,days=[]){
   const row=document.createElement("tr");
   row.innerHTML=`<td>${name}</td>`;
@@ -265,25 +273,18 @@ function createHabitRow(name,days=[]){
     const cb=document.createElement("input");
     cb.type="checkbox";
     cb.checked=days[i]||false;
-    cb.addEventListener("change",()=>{
-      calculatePoints();
-      saveHabits();
-    });
+    cb.addEventListener("change",()=>{calculatePoints();saveHabits();});
     td.appendChild(cb);
     row.appendChild(td);
   }
   const del=document.createElement("td");
   del.innerHTML="<button class='delete-btn'>X</button>";
   del.addEventListener("click",()=>{
-    row.remove();
-    calculatePoints(); 
-    saveHabits();
-    showNotification("🗑 تم حذف عادة");
+    row.remove();calculatePoints();saveHabits();showNotification("🗑 تم حذف عادة");
   });
   row.appendChild(del);
   return row;
 }
-
 function addHabit(){
   const input=document.getElementById("habitInput");
   if(!input.value.trim()) return;
@@ -294,7 +295,6 @@ function addHabit(){
   calculatePoints();
   showNotification("✅ عادة جديدة أضيفت");
 }
-
 function calculatePoints(){
   points=0;
   tableBody.querySelectorAll("tr").forEach(row=>{
@@ -304,7 +304,6 @@ function calculatePoints(){
   });
   updateStats();
 }
-
 function updateStats(){
   document.getElementById("points").textContent="النقاط: "+points;
   document.getElementById("progressBar").style.width=(points%100)+"%";
@@ -319,12 +318,10 @@ function updateStats(){
   }
   updateTopList();
 }
-
 function updateTopList(){
   const list=document.getElementById("topList");
   list.innerHTML=`<li>🥇 النقاط الحالية: ${points} نقطة</li>`;
 }
-
 function resetPoints(){
   document.querySelectorAll("input[type='checkbox']").forEach(cb=>cb.checked=false);
   points=0;
@@ -332,7 +329,6 @@ function resetPoints(){
   saveHabits();
   showNotification("🔄 تم تصفير النقاط");
 }
-
 function changeName(){
   const input=document.getElementById("nameInput");
   const newName=input.value.trim();
@@ -350,14 +346,62 @@ function changeName(){
   input.value="";
   showNotification("✨ تم تغيير الاسم بنجاح!");
 }
-
 window.addEventListener("DOMContentLoaded",()=>{
-  const savedName = localStorage.getItem("userName");
-  if(savedName){
-    document.getElementById("currentName").textContent = savedName;
-  }
+  const savedName=localStorage.getItem("userName");
+  if(savedName) document.getElementById("currentName").textContent=savedName;
   loadHabits();
 });
+
+/* ---- لعبة الحية ---- */
+const canvas=document.getElementById("game");
+const ctx=canvas.getContext("2d");
+const grid=16;
+let snake=[{x:160,y:160}];
+let dx=grid;
+let dy=0;
+let apple={x:80,y:80};
+let score=0;
+let running=false;
+let paused=false;
+let gameSpeed=160;
+let lastMove=0;
+
+function random(){return Math.floor(Math.random()*20)*grid;}
+function startGame(){running=true;paused=false;}
+function pauseGame(){paused=!paused;}
+function resetGame(){snake=[{x:160,y:160}];dx=grid;dy=0;score=0;document.getElementById("score").innerText=score;}
+function gameOver(){showNotification("💥 خسرت اللعبة!");running=false;resetGame();}
+
+function loop(time){
+  requestAnimationFrame(loop);
+  if(!running || paused) return;
+  if(time-lastMove<gameSpeed) return;
+  lastMove=time;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  let head={x:snake[0].x+dx,y:snake[0].y+dy};
+  if(head.x<0||head.y<0||head.x>=canvas.width||head.y>=canvas.height){gameOver();return;}
+  snake.unshift(head);
+  if(head.x==apple.x&&head.y==apple.y){score++;document.getElementById("score").innerText=score;apple.x=random();apple.y=random();}
+  else{snake.pop();}
+  ctx.fillStyle="red";ctx.fillRect(apple.x,apple.y,grid-1,grid-1);
+  ctx.fillStyle="lime";snake.forEach(s=>{ctx.fillRect(s.x,s.y,grid-1,grid-1);});
+  for(let i=1;i<snake.length;i++){if(head.x==snake[i].x && head.y==snake[i].y){gameOver();}}
+}
+
+function changeDirection(dir){
+  if(dir=="left"&&dx==0){dx=-grid;dy=0;}
+  if(dir=="right"&&dx==0){dx=grid;dy=0;}
+  if(dir=="up"&&dy==0){dy=-grid;dx=0;}
+  if(dir=="down"&&dy==0){dy=grid;dx=0;}
+}
+document.addEventListener("keydown",e=>{
+  if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.key)) e.preventDefault();
+  if(e.key=="ArrowLeft") changeDirection("left");
+  if(e.key=="ArrowRight") changeDirection("right");
+  if(e.key=="ArrowUp") changeDirection("up");
+  if(e.key=="ArrowDown") changeDirection("down");
+});
+requestAnimationFrame(loop);
 </script>
 </body>
 </html>
